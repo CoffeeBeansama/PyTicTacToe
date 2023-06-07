@@ -24,11 +24,7 @@ class TicTacToe:
         self.window = sg.Window("PyTicTacToe",layout=self.layout,size=self.window_size)
 
     def CheckWinner(self):
-        win = self.available_tile["a1"] and self.available_tile["b1"] and self.available_tile["c1"]  == 1
-
-
-        if win:
-            print("haha")
+        pass
 
 
     def ChangeTile(self,key):
