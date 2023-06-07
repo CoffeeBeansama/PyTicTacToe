@@ -23,23 +23,29 @@ class TicTacToe:
 
         self.window = sg.Window("PyTicTacToe",layout=self.layout,size=self.window_size)
 
-    def CheckWinner(self,key):
-        pass
+    def CheckWinner(self):
+        win = self.available_tile["a1"] and self.available_tile["b1"] and self.available_tile["c1"]  == 1
+
+
+        if win:
+            print("haha")
 
 
     def ChangeTile(self,key):
 
         if self.available_tile[key] <= 0:
             self.Turn += 1
-            
-            if self.Turn % 2: #even numbers
+            print(self.Turn)
+            if self.Turn % 2: # odd turns
+                self.available_tile[key] = 1
+                self.window[key].update(filename=self.Sprite["X"])
+
+
+            else: #even turns
                 self.available_tile[key] = 2
 
                 self.window[key].update(filename=self.Sprite["O"])
 
-            else: #odd numbers
-                self.available_tile[key] = 1
-                self.window[key].update(filename=self.Sprite["X"])
 
 
 
@@ -56,6 +62,7 @@ class TicTacToe:
 
             if event in ["a1","a2","a3","b1","b2","b3","c1","c2","c3"]:
                 self.ChangeTile(event)
+                self.CheckWinner()
 
 
             if event == sg.WINDOW_CLOSED:
