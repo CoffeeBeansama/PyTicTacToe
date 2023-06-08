@@ -24,14 +24,38 @@ class TicTacToe:
         self.window = sg.Window("PyTicTacToe",layout=self.layout,size=self.window_size)
 
     def CheckWinner(self):
-        pass
+
+        row1 = self.available_tile["a1"] + self.available_tile["a2"] + self.available_tile["a3"]
+        row2 = self.available_tile["b1"] + self.available_tile["b2"] + self.available_tile["b3"]
+        row3 = self.available_tile["c1"] + self.available_tile["c2"] + self.available_tile["c3"]
+
+        col1 = self.available_tile["a1"] + self.available_tile["b1"] + self.available_tile["c1"]
+        col2 = self.available_tile["a2"] + self.available_tile["b2"] + self.available_tile["c2"]
+        col3 = self.available_tile["a3"] + self.available_tile["b3"] + self.available_tile["c3"]
+
+        if row1 == 3:
+            print("winner = x")
+        elif row1 == 6:
+            print("winner = o")
+        if row2 == 3:
+            print("winner = x")
+        elif row2 == 6:
+            print("winner = o")
+        if row3 == 3:
+            print("winner = x")
+        elif row3 == 6:
+            print("winner = o")
+        
+
+
+
 
 
     def ChangeTile(self,key):
 
         if self.available_tile[key] <= 0:
             self.Turn += 1
-            print(self.Turn)
+
             if self.Turn % 2: # odd turns
                 self.available_tile[key] = 1
                 self.window[key].update(filename=self.Sprite["X"])
