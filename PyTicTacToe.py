@@ -8,12 +8,16 @@ class TicTacToe:
         sg.theme("DarkBlue9")
 
         self.Turn = 0
-
+        self.currentPlayer = None
         self.game_running = True
 
         self.Sprite = { "Tile": "Sprite/Tile.png","X": "Sprite/X Tile.png", "O": "Sprite/O Tile.png"}
 
-        self.available_tile = {"a1": 0,"a2":0,"a3":0,"b1": 0,"b2":0,"b3":0,"c1": 0,"c2":0,"c3":0}
+        self.Board = [
+            ["*","*","*"],
+            ["*","*","*"],
+            ["*","*","*"]
+        ]
 
         self.layout = [
             [self.Tile(self.Sprite["Tile"],"a1"),self.Tile(self.Sprite["Tile"],"a2"),self.Tile(self.Sprite["Tile"],"a3")],
@@ -23,67 +27,112 @@ class TicTacToe:
 
         self.window = sg.Window("PyTicTacToe",layout=self.layout,size=self.window_size)
 
-    def CheckWinner(self):
+    def PlayerWon(self):
+        win = None
+        board_length = len(self.Board)
 
-        row1 = self.available_tile["a1"] + self.available_tile["a2"] + self.available_tile["a3"]
-        row2 = self.available_tile["b1"] + self.available_tile["b2"] + self.available_tile["b3"]
-        row3 = self.available_tile["c1"] + self.available_tile["c2"] + self.available_tile["c3"]
+        for i in range(board_length):
+            win = True
+            for j in range(board_length):
+                if self.Board[i][j] != self.currentPlayer:
+                    win = False
+                    break
+            if win:
+                return win
+        for i in range(board_length):
+            win = True
+            for j in range(board_length):
+                if self.Board[j][i] != self.currentPlayer:
+                    win = False
+                    break
+            if win:
+                return win
 
-        col1 = self.available_tile["a1"] + self.available_tile["b1"] + self.available_tile["c1"]
-        col2 = self.available_tile["a2"] + self.available_tile["b2"] + self.available_tile["c2"]
-        col3 = self.available_tile["a3"] + self.available_tile["b3"] + self.available_tile["c3"]
+        win = True
+        for i in range(board_length):
 
-        if row1 == 3:
-            print("winner = x")
-        elif row1 == 6:
-            print("winner = o")
-        if row2 == 3:
-            print("winner = x")
-        elif row2 == 6:
-            print("winner = o")
-        if row3 == 3:
-            print("winner = x")
-        elif row3 == 6:
-            print("winner = o")
-        
+            for j in range(board_length):
+                if self.Board[i][i] != self.currentPlayer:
+                    win = False
+                    break
+        if win:
+            return win
 
+        win = True
+        for i in range(board_length):
 
+            for j in range(board_length):
+                if self.Board[i][board_length - 1 - i] != self.currentPlayer:
+                    win = False
+                    break
+        if win:
+            return win
 
+        for row in self.Board:
+            for item in row:
+                if item == "*":
+                    return False
+        return True
 
+    def UpdateBoard(self,key,row,column):
 
-    def ChangeTile(self,key):
-
-        if self.available_tile[key] <= 0:
+        if self.Board[row][column] == "*":
             self.Turn += 1
 
-            if self.Turn % 2: # odd turns
-                self.available_tile[key] = 1
+            if self.Turn % 2:
+                # odd number turns
+                self.currentPlayer = "X"
                 self.window[key].update(filename=self.Sprite["X"])
-
-
-            else: #even turns
-                self.available_tile[key] = 2
-
+            else:
+                # even number turns
+                self.currentPlayer = "0"
                 self.window[key].update(filename=self.Sprite["O"])
 
-
-
+            self.Board[row][column] = self.currentPlayer
 
 
 
     def Tile(self,content,key):
         return sg.Image(content,size=self.tile_size,enable_events=True,key=key)
 
+    def getEvents(self,event):
+
+        if event == "a1":
+            self.UpdateBoard(event, 0, 0)
+
+        elif event == "a2":
+            self.UpdateBoard(event, 0, 1)
+
+        elif event == "a3":
+            self.UpdateBoard(event, 0, 2)
+
+        elif event == "b1":
+            self.UpdateBoard(event, 1, 0)
+
+        elif event == "b2":
+            self.UpdateBoard(event, 1, 1)
+
+        elif event == "b3":
+            self.UpdateBoard(event, 1, 2)
+
+        elif event == "c1":
+            self.UpdateBoard(event, 2, 0)
+
+        elif event == "c2":
+            self.UpdateBoard(event, 2, 1)
+
+        elif event == "c3":
+            self.UpdateBoard(event, 2, 2)
     def Run(self):
 
         while self.game_running:
 
             event, values = self.window.read()
 
-            if event in ["a1","a2","a3","b1","b2","b3","c1","c2","c3"]:
-                self.ChangeTile(event)
-                self.CheckWinner()
+            self.getEvents(event)
 
+            if self.PlayerWon():
+                print(f"Winner is: {self.currentPlayer}")
 
             if event == sg.WINDOW_CLOSED:
                 self.game_running = False
