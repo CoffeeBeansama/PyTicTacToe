@@ -27,10 +27,26 @@ class TicTacToe:
 
         self.window = sg.Window("PyTicTacToe",layout=self.layout,size=self.window_size)
 
-    def PlayerWon(self):
-        win = None
+
+    def resetBoard(self,tile):
+
+        self.Board = [
+            ["*", "*", "*"],
+            ["*", "*", "*"],
+            ["*", "*", "*"]
+        ]
+
         board_length = len(self.Board)
 
+        for row_index,row in enumerate(self.layout):
+            for column_index,column in enumerate(row):
+                key = self.layout[row_index][column_index].key
+                self.window[key].update(filename=tile)
+
+    def PlayerWon(self):
+        win = None
+
+        board_length = len(self.Board)
         for i in range(board_length):
             win = True
             for j in range(board_length):
@@ -74,6 +90,14 @@ class TicTacToe:
                     return False
         return True
 
+    def GameDraw(self):
+
+        for row in self.Board:
+            for items in row:
+                if items == "*":
+                    return False
+        return True
+
     def UpdateBoard(self,key,row,column):
 
         if self.Board[row][column] == "*":
@@ -89,7 +113,6 @@ class TicTacToe:
                 self.window[key].update(filename=self.Sprite["O"])
 
             self.Board[row][column] = self.currentPlayer
-
 
 
     def Tile(self,content,key):
@@ -131,8 +154,22 @@ class TicTacToe:
 
             self.getEvents(event)
 
+            if self.GameDraw():
+                if sg.PopupYesNo(f"    Game Draw!!"
+                                 f"\n     Reset Game?") == "Yes":
+                    self.resetBoard(self.Sprite["Tile"])
+                else:
+                    break
+
             if self.PlayerWon():
-                print(f"Winner is: {self.currentPlayer}")
+                if sg.PopupYesNo(f"    Player : {self.currentPlayer}  Win!!"
+                                 f"\n     Reset Game?") == "Yes":
+                    self.resetBoard(self.Sprite["Tile"])
+                else:
+                    break
+
+
+
 
             if event == sg.WINDOW_CLOSED:
                 self.game_running = False
